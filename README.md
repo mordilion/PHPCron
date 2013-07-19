@@ -49,7 +49,7 @@ $jobs = $crontab->get();
 foreach ($jobs as $index => $job) {
             
     $jobSignature = $job->getComment();
-    if ($jobSignature == $fromSignature || $jobSignaature == $toSignature) {
+    if ($jobSignature == $fromSignature || $jobSignature == $toSignature) {
         
         // remove all jobs for the last and current release
         $crontab->remove($index);
