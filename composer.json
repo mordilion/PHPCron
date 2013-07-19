@@ -1,0 +1,17 @@
+{
+    "name": "zolex/phpcron",
+    "description": "PHPCron",
+    "type": "library",
+    "keywords": [
+        "crontab",
+        "cronjob",
+	"cron"
+    ],
+    "homepage": "https://github.com/zolex/PHPCron",
+    "license": "MIT-License",
+    "autoload": {
+        "psr-0": {
+            "PHPCron\\": "src/"
+        }
+    }
+}
