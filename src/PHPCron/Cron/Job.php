@@ -1,5 +1,5 @@
 <?php
-namespace Cron;
+namespace PHPCron\Cron;
 
 use \Symfony\Component\Filesystem\Filesystem;
 
