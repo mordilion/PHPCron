@@ -35,10 +35,12 @@ $projectName = $argv[3];
 $stage = $argv[4];
 $projectPath = $argv[5];
 
+// composer-based autoloading, could also include the required files yourself etc.
 require($projectPath . DS .'vendor'. DS . 'autoload.php');
 
 use PHPCron\Cron;
 
+// create signatures used to identify the jobs for the application, stage and release version
 $fromSignature = 'app='. $projectName .'; env='. $stage .'; rel='. $fromRelease;
 $toSignature = 'app='. $projectName .'; env='. $stage .'; rel='. $toRelease;
 
@@ -49,24 +51,32 @@ foreach ($jobs as $index => $job) {
     $jobSignature = $job->getComment();
     if ($jobSignature == $fromSignature || $jobSignaature == $toSignature) {
         
+        // remove all jobs for the last and current release
         $crontab->remove($index);
     }
 }
 
 if (0 !== $toRelease) {
 
-    $joblist = (@include $projectPath . DS .'config'. DS .'cronjobs.php');
-    if (is_array($joblist)) {
-                
-        $signature = 'app='. $projectName .'; env='. $stage .'; rel='. $toRelease;
-        foreach ($joblist as $job) {
-                          
-            $originalCommand = $job->getCommand();
-            $finalCommand = 'cd '. $projectPath .' && export APPLICATION_ENV="'. $stage .'" && '. $originalCommand;
-            $job->setCommand($finalCommand);                       
-            $job->setComment($signature);
-            $crontab->add($job);
-        }
+	$jobs = array();
+	$job = new Cron\Job;
+	$job->setMinute('*/10');
+	$job->setCommand('php script/something.php'); // $projectPath-relative calls
+	$jobs[] = $job;
+
+	$job = new Cron\Job;
+	$job->setMinute('0');
+	$job->setHour('23');
+	$job->setCommand('./script/something-else.sh');
+	$jobs[] = $job;
+
+    foreach ($jobs as $job) {
+                      
+        $originalCommand = $job->getCommand();
+        $finalCommand = 'cd '. $projectPath .' && export APPLICATION_ENV="'. $stage .'" && '. $originalCommand;
+        $job->setCommand($finalCommand);                       
+        $job->setComment($toSignature);
+        $crontab->add($job);
     }
 }
 
