@@ -136,10 +136,12 @@ class Job
         $lastRunTime = null;
         $logSize = null;
         $errorSize = null;
+
         if (isset($logFile) && \file_exists($logFile)) {
             $lastRunTime = \filemtime($logFile);
             $logSize = \filesize($logFile);
         }
+
         if (isset($errorFile) && \file_exists($errorFile)) {
             $lastRunTime = \max($lastRunTime?:0, \filemtime($errorFile));
             $errorSize = \filesize($errorFile);
@@ -157,25 +159,29 @@ class Job
 
         // create cron instance
         $cron = new self();
-        $cron->setMinute($parts[0]);
-        $cron->setHour($parts[1]);
-        $cron->setDayOfMonth($parts[2]);
-        $cron->setMonth($parts[3]);
-        $cron->setDayOfWeek($parts[4]);
-        $cron->setCommand(\trim($command));
-        $cron->setLastRunTime($lastRunTime);
-        $cron->setLogSize($logSize);
-        $cron->setErrorSize($errorSize);
-        $cron->setStatus($status);
+        $cron->setMinute($parts[0])
+            ->setHour($parts[1])
+            ->setDayOfMonth($parts[2])
+            ->setMonth($parts[3])
+            ->setDayOfWeek($parts[4])
+            ->setCommand(\trim($command))
+            ->setLastRunTime($lastRunTime)
+            ->setLogSize($logSize)
+            ->setErrorSize($errorSize)
+            ->setStatus($status);
+
         if (isset($isSuspended)) {
             $cron->setSuspended($isSuspended);
         }
+
         if (isset($comment)) {
             $cron->setComment($comment);
         }
+
         if (isset($logFile)) {
             $cron->setLogFile($logFile);
         }
+
         if (isset($errorFile)) {
             $cron->setErrorFile($errorFile);
         }
@@ -185,10 +191,13 @@ class Job
 
     /**
      * @param string $command
+     * @return PHPCron\Cron\Job
      */
     public function setCommand($command)
     {
         $this->command = $command;
+
+        return $this;
     }
 
     /**
@@ -201,10 +210,13 @@ class Job
 
     /**
      * @param string $dayOfMonth
+     * @return PHPCron\Cron\Job
      */
     public function setDayOfMonth($dayOfMonth)
     {
         $this->dayOfMonth = $dayOfMonth;
+
+        return $this;
     }
 
     /**
@@ -217,10 +229,13 @@ class Job
 
     /**
      * @param string $dayOfWeek
+     * @return PHPCron\Cron\Job
      */
     public function setDayOfWeek($dayOfWeek)
     {
         $this->dayOfWeek = $dayOfWeek;
+
+        return $this;
     }
 
     /**
@@ -233,10 +248,13 @@ class Job
 
     /**
      * @param string $hour
+     * @return PHPCron\Cron\Job
      */
     public function setHour($hour)
     {
         $this->hour = $hour;
+
+        return $this;
     }
 
     /**
@@ -249,10 +267,13 @@ class Job
 
     /**
      * @param string $minute
+     * @return PHPCron\Cron\Job
      */
     public function setMinute($minute)
     {
         $this->minute = $minute;
+
+        return $this;
     }
 
     /**
@@ -265,10 +286,13 @@ class Job
 
     /**
      * @param string $month
+     * @return PHPCron\Cron\Job
      */
     public function setMonth($month)
     {
         $this->month = $month;
+
+        return $this;
     }
 
     /**
@@ -281,10 +305,13 @@ class Job
 
     /**
      * @param string $comment
+     * @return PHPCron\Cron\Job
      */
     public function setComment($comment)
     {
         $this->comment = $comment;
+
+        return $this;
     }
 
     /**
@@ -297,10 +324,13 @@ class Job
 
     /**
      * @param string $logFile
+     * @return PHPCron\Cron\Job
      */
     public function setLogFile($logFile)
     {
         $this->logFile = $logFile;
+
+        return $this;
     }
 
     /**
@@ -313,10 +343,13 @@ class Job
 
     /**
      * @param string $errorFile
+     * @return PHPCron\Cron\Job
      */
     public function setErrorFile($errorFile)
     {
         $this->errorFile = $errorFile;
+
+        return $this;
     }
 
     /**
@@ -329,10 +362,13 @@ class Job
 
     /**
      * @param int $lastRunTime
+     * @return PHPCron\Cron\Job
      */
     public function setLastRunTime($lastRunTime)
     {
         $this->lastRunTime = $lastRunTime;
+
+        return $this;
     }
 
     /**
@@ -345,10 +381,13 @@ class Job
 
     /**
      * @param string $errorSize
+     * @return PHPCron\Cron\Job
      */
     public function setErrorSize($errorSize)
     {
         $this->errorSize = $errorSize;
+
+        return $this;
     }
 
     /**
@@ -361,10 +400,13 @@ class Job
 
     /**
      * @param string $logSize
+     * @return PHPCron\Cron\Job
      */
     public function setLogSize($logSize)
     {
         $this->logSize = $logSize;
+
+        return $this;
     }
 
     /**
@@ -377,10 +419,13 @@ class Job
 
     /**
      * @param string $status
+     * @return PHPCron\Cron\Job
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -416,13 +461,14 @@ class Job
      *
      * @param boolean $suspended status
      *
-     * @return Cron
+     * @return PHPCron\Cron\Job
      */
     public function setSuspended($isSuspended = true)
     {
         if ($this->isSuspended != $isSuspended) {
             $this->isSuspended = $isSuspended;
         }
+
         return $this;
     }
 
@@ -434,20 +480,25 @@ class Job
     public function __toString()
     {
         $cronLine = '';
+
         if ($this->isSuspended()) {
             $cronLine .= '#suspended: ';
         }
 
         $cronLine .= $this->getExpression().' '.$this->command;
+
         if ('' != $this->logFile) {
             $cronLine .= ' > '.$this->logFile;
         }
+
         if ('' != $this->errorFile) {
             $cronLine .= ' 2> '.$this->errorFile;
         }
+
         if ('' != $this->comment) {
             $cronLine .= ' #'.$this->comment;
         }
+
         return $cronLine;
     }
 }
