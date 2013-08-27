@@ -65,26 +65,33 @@ class Tab
      * Add a cron to the cron table
      *
      * @param Job $cron
+     * @return PHPCron\Cron\Tab
      */
     public function add(Job $cron)
     {
         $this->lines[] = $cron;
+
+        return $this;
     }
 
     /**
      * Remove a cron from the cron table
      *
      * @param $index The line number
+     * @return PHPCron\Cron\Tab
      */
     public function remove($index)
     {
         $this->lines = \array_diff_key($this->lines, array($index => ''));
+
+        return $this;
     }
 
     /**
      * Remove all crons which match the given command
      * 
      * @param string $command
+     * @return PHPCron\Cron\Tab
      */
     public function removeByCommand($command)
     {
@@ -98,10 +105,14 @@ class Tab
                 }
             }
         }
+
+        return $this;
     }
 
     /**
      * Write the current crons in the cron table
+     *
+     * @return PHPCron\Cron\Tab
      */
     public function write()
     {
@@ -114,6 +125,8 @@ class Tab
 
         $this->error = $process->getErrorOutput();
         $this->output = $process->getOutput();
+
+        return $this;
     }
 
     /**
